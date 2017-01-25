@@ -227,6 +227,15 @@ class TestUbootAction(StdoutTestCase):  # pylint: disable=too-many-public-method
         overlay = [action for action in uboot.internal_pipeline.actions if action.name == 'bootloader-overlay'][0]
         self.assertEqual(overlay.commands, ['a list', 'of commands', 'with a {KERNEL_ADDR} substitution'])
 
+    def test_nbd_boot(self):
+        job = self.factory.create_bbb_job('sample_jobs/bbb-initrd-nbd.yaml')
+        job.validate()
+        self.update_ref = True
+        self.assertEqual(job.pipeline.errors, [])
+        description_ref = self.pipeline_reference('bbb-initrd-nbd.yaml', job=job)
+        self.assertEqual(description_ref, job.pipeline.describe(False))
+        # Fixme: more asserts
+
     def test_transfer_media(self):
         """
         Test adding the overlay to existing rootfs
